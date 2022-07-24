@@ -1,7 +1,8 @@
 import express,  { json } from "express"
 import cors from "cors";
 import dotenv from "dotenv";
-import categorieRoute from "./src/routes/categoriesRoute.js";
+import categorieRouter from "./src/routes/categoriesRoute.js";
+import gameRouter from "./src/routes/gamesRoute.js";
 
 dotenv.config();
 
@@ -9,7 +10,8 @@ const server = express()
 
 server.use(json())
 server.use(cors())
-server.use(categorieRoute)
+server.use(categorieRouter)
+server.use(gameRouter)
 
 server.listen( process.env.PORT ,()=>{
     console.log("servidor no ar ", process.env.PORT)

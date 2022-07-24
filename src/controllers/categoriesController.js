@@ -17,10 +17,21 @@ export async function creatCategory(req, res){
     } catch (error) {
         console.log(error)
         res.sendStatus(500)
+        return
     }
 
 }
 
-export async function listCategories(){
+export async function listCategories(req, res){
+    //acessar banco pegar nomes das categorias
+    try {
+        const categoriesNames = await db.query(`SELECT * FROM categories`)
+        res.status(200).send(categoriesNames.rows)
+    } catch (error) {
+        console.log(error)
+        res.sendStatus(500)
+        return
+    }
+
 
 }

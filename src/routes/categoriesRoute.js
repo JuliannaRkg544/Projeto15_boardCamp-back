@@ -2,9 +2,9 @@ import { creatCategory, listCategories } from "../controllers/categoriesControll
 import { Router } from "express";
 import { categorieValidation } from "../middlewares/categoriesMiddleware.js";
 
-const categorieRoute = Router()
+const categorieRouter = Router()
 
-categorieRoute.post("/categories", categorieValidation, creatCategory)
-categorieRoute.get("/categories", listCategories)
+categorieRouter.post("/categories", categorieValidation, creatCategory)
+categorieRouter.get("/categories", listCategories)
 
-export default categorieRoute
+export default categorieRouter
