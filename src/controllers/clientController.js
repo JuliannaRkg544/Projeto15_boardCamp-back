@@ -38,7 +38,7 @@ export async function listClientById (req, res){
             console.log("client not found")
             return res.sendStatus(404)
         }
-        res.status(200).send(clientById.rows)
+        res.status(200).send(clientById.rows[0])
         
     } catch (error) {
         console.log(error)
