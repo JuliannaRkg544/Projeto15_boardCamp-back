@@ -2,11 +2,9 @@ import db from "../../db.js";
 
 export async function creatCategory(req, res){
     const {name} = req.body
-    //verificar se ja existe no banquinho;
-    //const categories = await db.query("SELECT * FROM categories") 
     try {
         const existentName  = await db.query(`SELECT FROM categories WHERE name = $1`, [name])
-        if (existentName.rows.length!=0) //array de objetos com resultado da consulta
+        if (existentName.rows.length!=0) 
         {
             res.status(409).send("Categoy name already exist");
             return

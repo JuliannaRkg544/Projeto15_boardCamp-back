@@ -13,6 +13,7 @@ const server = express()
 
 server.use(json())
 server.use(cors())
+
 server.use(categorieRouter)
 server.use(gameRouter)
 server.use(clientRouter)

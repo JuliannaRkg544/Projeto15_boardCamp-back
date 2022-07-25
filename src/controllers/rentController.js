@@ -2,7 +2,6 @@ import db from "../../db.js";
 
 export async function insertRental(req, res){
     const rentInfo = req.body
-    //original price sera o preco do jogo q vem da tabela de jogo pelo id
     try {
         const verifyCustomerId = await db.query(`SELECT * FROM customers WHERE id =$1 `, [rentInfo.customerId])
         if(verifyCustomerId.rows.length==0){
@@ -46,12 +45,12 @@ export async function finishRental(req, res){
             return res.status(400).send("No game with this id found")
         } 
         const {delayFee} = rentedGame.rows[0]   
-        const {daysRented} = rentedGame.rows[0]   
-        const {rentDate} = rentedGame.rows[0] 
+        const {daysRented} = rentedGame.rows[0]  
+        const rentDate = rentedGame.rows[0].rentDate
         
         
         let rentDay = toString(rentDate)
-        console.log(rentDay)
+        console.log(typeof rentDate)
         const returnDay = returnDate.split("-")
         const delayDays = returnDay[0]-rentDay[2]
         if (delayDays>daysRented){ //pegar o pricePerday
@@ -69,9 +68,50 @@ export async function finishRental(req, res){
 }
 
 export async function listRental(req, res){
-    // const { customerId, gameId } = req.query;
-    // const verifyCustomerId
-    
+    const { customerId, gameId } = req.query;
+
+    if(customerId){
+        const costumerRentals = await db.query(`SELECT * FROM rentals WHERE id=$1`,[customerId]) 
+        if(costumerRentals.rows.length===0){
+        return res.status(404).send("client not found")
+        }
+    }
+    else if(gameId){
+        const games = await db.query(`SELECT * FROM rentals WHERE "gameId"=$1`,[gameId])
+        if(games.rows.length===0){
+        return res.status(404).send("game not found")
+        }
+} else {
+    const allRentals = await db.query(`SELECT rentals.*, games.id as "gameId", games.name as "gameName", games."categoryId" as "gameCategoryId", customers.name as "customerName", customers.id as "customerId", categories.id as "categoryId", categories.name as "categoryName" FROM rentals
+            JOIN games
+            ON rentals."gameId" = games.id
+            JOIN customers
+            ON rentals."customerId" = customers.id
+            JOIN categories
+            ON games."categoryId" = categories.id`)
+            if(allRentals.rows.length==0){
+                res.status(404).send("no rentals information")
+                return
+            }
+            const response = allRentals.rows.map((rentals)=>{
+                return(
+                 {
+                     ...rentals,
+                     game: {
+                       id: rentals.gameId,
+                       name: rentals.gameName,
+                       categoryId: rentals.categoryId,
+                       categoryName: rentals.categoryName,
+                     },
+                     customer: {
+                         id: rentals.customerId,
+                         name: rentals.customerName,
+                     }
+                 }
+                ) 
+             })
+             res.status(200).send(response)
+         }       
 }
 
 

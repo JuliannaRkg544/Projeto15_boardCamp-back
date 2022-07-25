@@ -23,10 +23,26 @@ export async function createGame(req, res){
 }
 
 export async function listGame(req, res){
-      //ir no banquinho de games, pegar tudo, e enviar pro user
+     const {name} = req.query
+     
      try {
-        const gameList = await db.query("SELECT * FROM games")
+    if(!name){
+        const gameList = await db.query(`SELECT games.*, categories.name as "categoryName" FROM games
+        JOIN categories 
+        ON games."categoryId" = categories.id`)
+        if(gameList.rows.length==0){
+            return res.sendStatus(404)
+        }
         res.status(200).send(gameList.rows)
+     } else{
+        const gameListQuery = await db.query(`SELECT * FROM games WHERE name ILIKE '${name}%'`)
+        if(gameListQuery.rows.length==0){
+            return res.sendStatus(404)
+        }
+        res.status(200).send(gameListQuery.rows)
+
+     }
+       
      } catch (error) {
         console.log(error)
         return res.sendStatus(500)
