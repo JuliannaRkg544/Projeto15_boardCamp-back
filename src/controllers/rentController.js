@@ -46,14 +46,13 @@ export async function finishRental(req, res){
         } 
         const {delayFee} = rentedGame.rows[0]   
         const {daysRented} = rentedGame.rows[0]  
-        const rentDate = rentedGame.rows[0].rentDate
-        
-        
-        let rentDay = toString(rentDate)
-        console.log(typeof rentDate)
-        const returnDay = returnDate.split("-")
-        const delayDays = returnDay[0]-rentDay[2]
-        if (delayDays>daysRented){ //pegar o pricePerday
+        const {rentDate} = rentedGame.rows[0]
+    
+        let rentDay = rentDate.toString().slice(8, 10)
+        let returnDay = returnDate.toString().slice(8, 10)
+        console.log(rentDay, returnDay)
+        const delayDays = returnDay-rentDay
+        if (delayDays>daysRented){ 
             const pricePerDay = await db.query (`SELECT rentals.*,games."pricePerDay" FROM rentals
             JOIN games
             ON rentals."gameId" = games.id WHERE rentals.id=$1`,[rentId]);
